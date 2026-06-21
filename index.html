@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Equilibrium | Weighted Decision Matrix</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&amp;family=Geist:wght=400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#7c839b",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "primary-fixed": "#dae2fd",
+                    "outline-variant": "#c6c6cd",
+                    "primary": "#000000",
+                    "on-surface": "#191c1e",
+                    "surface-container-highest": "#e0e3e5",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary-fixed-variant": "#005047",
+                    "on-tertiary-fixed": "#00201c",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-container": "#009485",
+                    "tertiary-fixed-dim": "#3cddc7",
+                    "surface-tint": "#565e74",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#bec6e0",
+                    "secondary-container": "#6063ee",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#62fae3",
+                    "secondary": "#4648d4",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface": "#f7f9fb",
+                    "background": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "on-secondary-container": "#fffbff",
+                    "surface-dim": "#d8dadc",
+                    "inverse-surface": "#2d3133",
+                    "error": "#ba1a1a",
+                    "primary-container": "#131b2e",
+                    "outline": "#76777d",
+                    "surface-variant": "#e0e3e5",
+                    "on-background": "#191c1e",
+                    "tertiary": "#000000",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#bec6e0",
+                    "on-primary-fixed": "#131b2e",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#45464d",
+                    "on-secondary-fixed": "#07006c",
+                    "tertiary-container": "#00201c",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#c0c1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "gutter": "24px",
+                    "xs": "8px",
+                    "md": "24px",
+                    "sm": "16px",
+                    "lg": "48px",
+                    "container-max": "1200px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Geist"],
+                    "mono-data": ["Geist"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "mono-data": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"} ]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        body { background-color: #f7f9fb; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); }
+        .ambient-glow { box-shadow: 0 32px 64px -12px rgba(70, 72, 212, 0.08); }
+        .matrix-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .matrix-cell:hover { background: rgba(70, 72, 212, 0.04); transform: translateX(4px); }
+        .custom-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: #e0e3e5; outline: none; }
+        .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: white; border: 1px solid #76777d; cursor: pointer; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: all 0.2s ease; }
+        .custom-slider::-webkit-slider-thumb:hover { transform: scale(1.25); border-color: #4648d4; box-shadow: 0 0 0 4px rgba(70, 72, 212, 0.1); }
+        .active-thumb::-webkit-slider-thumb { border-color: #4648d4; background: #4648d4; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
+        
+        .progress-ring-circle { transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .summary-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .content-fade { transition: opacity 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-on-surface">
+<main class="flex flex-col items-center justify-center min-h-screen px-gutter py-xl gap-sm max-w-5xl mx-auto w-full">
+
+  <section class="glass-panel ambient-glow rounded-3xl p-md w-full border border-secondary/20">
+    <div class="flex flex-col gap-xs">
+        <label for="ai-prompt-input" class="text-label-caps font-label-caps text-secondary uppercase tracking-wider">Generate Matrix via AI Strategy Engine</label>
+        <div class="flex gap-sm items-center mt-1">
+            <div class="relative flex-grow">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50">auto_awesome</span>
+                <input id="ai-prompt-input" type="text" placeholder="e.g., Decide between purchasing an electric car vs hybrid vs ICE commuter car..." class="w-full bg-surface border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 text-body-md focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all" />
+            </div>
+            <button id="ai-submit-btn" class="bg-secondary hover:bg-secondary-container text-on-secondary px-md h-[46px] rounded-xl font-label-caps text-label-caps flex items-center gap-xs shadow-md transition-all active:scale-95 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[18px]">bolt</span> Generate
+            </button>
+        </div>
+        <p id="ai-status-message" class="text-[12px] text-on-surface-variant/60 font-medium hidden mt-1 flex items-center gap-1"></p>
+    </div>
+  </section>
+
+  <section id="matrix-component" class="glass-panel ambient-glow rounded-[2rem] p-lg w-full content-fade opacity-100">
+    <div class="flex flex-col md:flex-row justify-between items-end gap-md mb-xl">
+      <div>
+        <span class="text-label-caps font-label-caps text-secondary mb-2 block uppercase">Current Project</span>
+        <h2 id="project-title" class="text-headline-lg font-headline-lg">MBA vs. Startup Job vs. World Travel</h2>
+      </div>
+      <div class="flex items-center gap-sm">
+        <button id="add-criteria-btn" class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-full flex items-center gap-xs transition-colors font-label-caps text-label-caps">
+          <span class="material-symbols-outlined text-[18px]">rule</span>
+          Add Criteria
+        </button>
+        <button id="add-option-btn" class="bg-secondary hover:bg-secondary-container text-on-secondary px-md py-sm rounded-full flex items-center gap-xs transition-colors font-label-caps text-label-caps shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          Add Option
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl" id="summary-container">
+      </div>
+
+    <div class="overflow-x-auto">
+      <div class="min-w-[800px]" id="matrix-grid">
+        <div class="grid gap-xs mb-sm border-b border-outline-variant/10 pb-sm" id="columns-header-row">
+          </div>
+        
+        <div class="space-y-2" id="rows-container">
+          </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+    // System Unified Architecture Local App State Engine Model Setup
+    let state = {
+        title: "MBA vs. Startup Job vs. World Travel",
+        options: ["MBA", "Startup Job", "World Travel"],
+        criteria: [
+            { name: "Career Growth", weight: 9, ratings: [9, 7, 3] },
+            { name: "Financial ROI", weight: 10, ratings: [6, 8, 1] },
+            { name: "Work-Life Balance", weight: 7, ratings: [4, 5, 10] },
+            { name: "Networking", weight: 8, ratings: [10, 6, 8] }
+        ]
+    };
+
+    // Render Matrix Components Layout System Completely Based on Current state Configuration Data
+    function renderMatrix() {
+        document.getElementById('project-title').innerText = state.title;
+
+        // --- SECTION 1: Render Top Rank Summary Cards ---
+        const summaryContainer = document.getElementById('summary-container');
+        summaryContainer.innerHTML = '';
+        summaryContainer.className = `grid grid-cols-1 md:grid-cols-${Math.max(2, state.options.length)} gap-md mb-xl`;
+
+        state.options.forEach((optName, index) => {
+            summaryContainer.innerHTML += `
+              <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent hover:bg-white transition-colors duration-300 relative group" data-option="${index}">
+                <div class="flex justify-between items-start relative z-10">
+                  <div class="flex-grow mr-2">
+                    <p class="text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label">Rank —</p>
+                    <input type="text" value="${optName}" class="bg-transparent border-none p-0 focus:ring-2 focus:ring-secondary/30 rounded font-headline-md text-headline-md option-heading-input w-full" data-option="${index}"/>
+                  </div>
+                  <div class="flex items-center gap-2">
+                      <div class="relative w-16 h-16 flex items-center justify-center shrink-0">
+                        <svg class="w-full h-full -rotate-90">
+                          <circle cx="32" cy="32" fill="transparent" r="28" stroke="#e0e3e5" stroke-width="4"></circle>
+                          <circle class="progress-ring-circle" cx="32" cy="32" fill="transparent" r="28" stroke="#76777d" stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-linecap="round" stroke-width="4"></circle>
+                        </svg>
+                        <span class="absolute text-mono-data font-mono-data text-on-surface-variant score-percentage">0%</span>
+                      </div>
+                      <button data-option="${index}" class="delete-option-btn text-error opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-error-container/20 rounded-lg flex items-center justify-center shrink-0" title="Delete Option">
+                         <span class="material-symbols-outlined text-[20px]">delete</span>
+                      </button>
+                  </div>
+                </div>
+              </div>`;
+        });
+
+        // --- SECTION 2: Render Column Header Layout Structure Labels ---
+        const gridHeaderRow = document.getElementById('columns-header-row');
+        gridHeaderRow.className = `grid grid-cols-[240px_repeat(${state.options.length},_1fr)_48px] gap-xs mb-sm border-b border-outline-variant/10 pb-sm`;
+        
+        let headerHtml = `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase flex items-center">Criteria &amp; Weight</div>`;
+        state.options.forEach(optName => {
+            headerHtml += `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase text-center option-column-header truncate px-1" title="${optName}">${optName}</div>`;
+        });
+        headerHtml += `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase text-center flex items-center justify-center"></div>`; // spacer column matching action buttons layout alignment
+        gridHeaderRow.innerHTML = headerHtml;
+
+        // --- SECTION 3: Render Matrix Criteria Row Iteration Bundles ---
+        const rowsContainer = document.getElementById('rows-container');
+        rowsContainer.innerHTML = '';
+
+        state.criteria.forEach((crit, rIdx) => {
+            let rowHtml = `
+            <div class="grid grid-cols-[240px_repeat(${state.options.length},_1fr)_48px] gap-xs items-center matrix-cell p-sm rounded-xl criteria-row group/row" data-row="${rIdx}">
+                <div class="space-y-1">
+                  <input class="bg-transparent border-none p-0 focus:ring-0 font-headline-md text-body-md w-full criteria-name-input" type="text" value="${crit.name}"/>
+                  <div class="flex items-center gap-xs">
+                    <span class="text-label-caps font-label-caps text-secondary weight-label">Wt: ${crit.weight}</span>
+                    <input class="custom-slider active-thumb weight-slider" max="10" min="1" type="range" value="${crit.weight}"/>
+                  </div>
+                </div>`;
+            
+            for(let oIdx = 0; oIdx < state.options.length; oIdx++) {
+                const val = crit.ratings[oIdx] !== undefined ? crit.ratings[oIdx] : 5;
+                rowHtml += `
+                <div class="flex flex-col items-center gap-1">
+                  <span class="text-mono-data font-mono-data rating-label">${val}/10</span>
+                  <input class="custom-slider rating-slider" data-option="${oIdx}" max="10" min="1" type="range" value="${val}"/>
+                </div>`;
+            }
+
+            // Inline Criteria Action Controls Target
+            rowHtml += `
+                <div class="flex items-center justify-center">
+                    <button data-criteria="${rIdx}" class="delete-criteria-btn text-on-surface-variant/40 hover:text-error opacity-0 group-hover/row:opacity-100 transition-all p-1 hover:bg-error-container/20 rounded-lg flex items-center justify-center" title="Delete Criteria">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                </div>
+            </div>`;
+            
+            rowsContainer.innerHTML += rowHtml;
+        });
+
+        bindInputsAndEvents();
+        updateDashboard();
+    }
+
+    // Core Functional Engine Loop Math Computations Processing Algorithms
+    function updateDashboard() {
+        const criteriaRows = document.querySelectorAll('.criteria-row');
+        const summaryCards = document.querySelectorAll('.summary-card');
+        
+        let totalWeights = 0;
+        const criteriaWeights = [];
+        
+        // Dynamic reading input bindings state model mutation safety loops
+        criteriaRows.forEach((row, rIdx) => {
+            const weightVal = parseInt(row.querySelector('.weight-slider').value);
+            state.criteria[rIdx].weight = weightVal;
+            state.criteria[rIdx].name = row.querySelector('.criteria-name-input').value;
+            totalWeights += weightVal;
+            criteriaWeights.push(weightVal);
+        });
+
+        const optionScores = Array(state.options.length).fill(0);
+
+        criteriaRows.forEach((row, rowIndex) => {
+            const weight = criteriaWeights[rowIndex];
+            const ratingSliders = row.querySelectorAll('.rating-slider');
+            
+            ratingSliders.forEach((slider) => {
+                const oIdx = parseInt(slider.dataset.option);
+                const rating = parseInt(slider.value);
+                if(state.criteria[rowIndex].ratings[oIdx] !== undefined) {
+                    state.criteria[rowIndex].ratings[oIdx] = rating;
+                }
+                optionScores[oIdx] += (weight * rating);
+            });
+        });
+
+        const normalizedScores = optionScores.map(score => {
+            if (totalWeights === 0) return 0;
+            return Math.round((score / (totalWeights * 10)) * 100);
+        });
+
+        const ranking = normalizedScores
+            .map((score, index) => ({ index, score }))
+            .sort((a, b) => b.score - a.score);
+
+        summaryCards.forEach((card) => {
+            const optIndex = parseInt(card.dataset.option);
+            const score = normalizedScores[optIndex];
+            const rankObj = ranking.find(r => r.index === optIndex);
+            const rank = ranking.indexOf(rankObj) + 1;
+
+            const scoreLabel = card.querySelector('.score-percentage');
+            if(scoreLabel) scoreLabel.innerText = `${score}%`;
+
+            const circle = card.querySelector('.progress-ring-circle');
+            if(circle) {
+                const circumference = 175.9;
+                const offset = circumference - (score / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+            }
+
+            const rankLabel = card.querySelector('.rank-label');
+            if(rankLabel) rankLabel.innerText = `Rank ${rank}`;
+
+            if (rank === 1 && score > 0) {
+                card.classList.remove('bg-surface-container-low', 'border-transparent');
+                card.classList.add('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
+                if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-secondary uppercase mb-1 rank-label';
+                if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-secondary score-percentage';
+                if(circle) circle.setAttribute('stroke', '#4648d4');
+                card.style.order = "1";
+            } else {
+                card.classList.add('bg-surface-container-low', 'border-transparent');
+                card.classList.remove('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
+                if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label';
+                if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-on-surface-variant score-percentage';
+                if(circle) circle.setAttribute('stroke', '#76777d');
+                card.style.order = (rank + 1).toString();
+            }
+        });
+    }
+
+    // Dynamic Binding Registration Logic Lifecycle System Hook Elements
+    function bindInputsAndEvents() {
+        // Range slider text dynamic display labels handlers
+        document.querySelectorAll('.custom-slider').forEach(slider => {
+            slider.addEventListener('input', (e) => {
+                const val = e.target.value;
+                const parent = e.target.closest('div');
+                const label = parent.querySelector('.rating-label, .weight-label');
+                
+                if (label) {
+                    if (label.classList.contains('rating-label')) {
+                        label.innerText = `${val}/10`;
+                    } else if (label.classList.contains('weight-label')) {
+                        label.innerText = `Wt: ${val}`;
+                    }
+                }
+                updateDashboard();
+            });
+        });
+
+        // Option Alternate Name Editing Workflow Trackers Inline Input Change Listeners
+        document.querySelectorAll('.option-heading-input').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const oIdx = parseInt(e.target.dataset.option);
+                state.options[oIdx] = e.target.value.trim() || `Option ${oIdx + 1}`;
+                
+                // Track update header strings live matchers layouts execution bounds
+                const headers = document.querySelectorAll('.option-column-header');
+                if(headers[oIdx]) {
+                    headers[oIdx].innerText = state.options[oIdx];
+                    headers[oIdx].setAttribute('title', state.options[oIdx]);
+                }
+            });
+        });
+
+        // Criteria text descriptor model string matching listeners update
+        document.querySelectorAll('.criteria-name-input').forEach(input => {
+            input.addEventListener('input', () => {
+                const rIdx = parseInt(input.closest('.criteria-row').dataset.row);
+                state.criteria[rIdx].name = input.value;
+            });
+        });
+
+        // WORKFLOW: Delete Option Method Execution
+        document.querySelectorAll('.delete-option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('.delete-option-btn');
+                const oIdx = parseInt(targetBtn.dataset.option);
+                
+                if(state.options.length <= 1) {
+                    alert("A matrix configuration workspace session profile requires at least one alternative pathway selection blueprint.");
+                    return;
+                }
+
+                state.options.splice(oIdx, 1);
+                state.criteria.forEach(crit => {
+                    crit.ratings.splice(oIdx, 1);
+                });
+
+                renderMatrix();
+            });
+        });
+
+        // WORKFLOW: Delete Criteria Method Execution (CRUD - Delete)
+        document.querySelectorAll('.delete-criteria-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('.delete-criteria-btn');
+                const rIdx = parseInt(targetBtn.dataset.criteria);
+
+                if(state.criteria.length <= 1) {
+                    alert("A decision strategy session workspace blueprint grid requires at least one active criteria evaluation baseline framework matrix row metrics path.");
+                    return;
+                }
+
+                state.criteria.splice(rIdx, 1);
+                renderMatrix();
+            });
+        });
+    }
+
+    // WORKFLOW: Add Alternative Option Targets (CRUD - Create Option)
+    document.getElementById('add-option-btn').addEventListener('click', () => {
+        const nextIdIndex = state.options.length + 1;
+        state.options.push(`Alternative ${nextIdIndex}`);
+        state.criteria.forEach(crit => {
+            crit.ratings.push(5);
+        });
+        renderMatrix();
+    });
+
+    // WORKFLOW: Add Matrix Criteria Metric Evaluator Row (CRUD - Create Criteria)
+    document.getElementById('add-criteria-btn').addEventListener('click', () => {
+        const nextCritIndex = state.criteria.length + 1;
+        const baselineDefaultRatings = Array(state.options.length).fill(5);
+        
+        state.criteria.push({
+            name: `Evaluation Metric Criteria ${nextCritIndex}`,
+            weight: 5,
+            ratings: baselineDefaultRatings
+        });
+        
+        renderMatrix();
+        
+        // UX Enhancement Strategy Focus: scroll instantly downwards target to highlight row item addition context boundaries
+        const rows = document.querySelectorAll('.criteria-row');
+        if (rows.length > 0) {
+            rows[rows.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+
+    // AI Integration Model Pipelines Orchestration API Interceptors Orchestration Block Handlers Layer Setup
+    document.getElementById('ai-submit-btn').addEventListener('click', async () => {
+        const promptInput = document.getElementById('ai-prompt-input');
+        const statusMsg = document.getElementById('ai-status-message');
+        const matrixComponent = document.getElementById('matrix-component');
+        const query = promptInput.value.trim();
+
+        if(!query) {
+            statusMsg.innerText = "Please provide an actionable prompt strategy context.";
+            statusMsg.className = "text-[12px] text-error font-medium mt-1 flex items-center gap-1";
+            statusMsg.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            statusMsg.innerHTML = `<span class="animate-spin inline-block w-3 h-3 border-2 border-current border-t-transparent text-secondary rounded-full"></span> Contacting FastAPI orchestration endpoint...`;
+            statusMsg.className = "text-[12px] text-secondary font-medium mt-1 flex items-center gap-1";
+            statusMsg.classList.remove('hidden');
+
+            const response = await fetch('http://127.0.0.1:8000/ai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_input: query })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error response code profile mismatch: ${response.status}`);
+            }
+
+            const rawPayload = await response.json();
+            
+            // --- DATA NORMALIZATION LAYER ---
+            let parsedData = rawPayload;
+            if (rawPayload.data && typeof rawPayload.data === 'string') {
+                parsedData = JSON.parse(rawPayload.data);
+            } else if (rawPayload.data && typeof rawPayload.data === 'object') {
+                parsedData = rawPayload.data;
+            }
+
+            const targetOptions = parsedData.options || parsedData.alternatives || ["Choice A", "Choice B"];
+            const rawCriteria = parsedData.criteria || [];
+
+            const normalizedCriteria = rawCriteria.map(crit => {
+                let ratingsArray = [];
+                if (Array.isArray(crit.ratings)) {
+                    ratingsArray = crit.ratings;
+                } else if (crit.scores && typeof crit.scores === 'object') {
+                    ratingsArray = targetOptions.map(optName => crit.scores[optName] ?? 5);
+                } else {
+                    ratingsArray = Array(targetOptions.length).fill(5);
+                }
+                return {
+                    name: crit.name || "Unnamed Metric",
+                    weight: crit.weight ?? 5,
+                    ratings: ratingsArray
+                };
+            });
+
+            // Set normalized model variables properties back into centralized runtime local storage state boundaries
+            state.title = parsedData.title || parsedData.project_title || "AI Matrix Session Strategy";
+            state.options = targetOptions;
+            state.criteria = normalizedCriteria;
+
+            // Trigger Smooth Transition Fades Layout
+            matrixComponent.classList.replace('opacity-100', 'opacity-0');
+            
+            setTimeout(() => {
+                renderMatrix();
+                matrixComponent.classList.replace('opacity-0', 'opacity-100');
+                statusMsg.innerHTML = `<span class="material-symbols-outlined text-[14px]">check_circle</span> Matrix layout calculated and updated successfully.`;
+                statusMsg.className = "text-[12px] text-emerald-600 font-medium mt-1 flex items-center gap-1";
+            }, 300);
+
+        } catch (err) {
+            statusMsg.innerText = `Network/Processing Error Context: ${err.message}`;
+            statusMsg.className = "text-[12px] text-error font-medium mt-1 flex items-center gap-1";
+        }
+    });
+
+    // Boot Up Initialization Lifecycle Sequence Start Execution Trigger
+    renderMatrix();
+</script>
+</body>
+</html>
