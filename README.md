@@ -49,7 +49,7 @@ The system assigns weights and scores to each criterion, then calculates an over
 ---
 
 ## Project Structure
-
+'''text
 decision/
 │
 ├── controllers/
@@ -63,7 +63,7 @@ decision/
 ├── prototype_algorithm.py
 ├── requirements.txt
 └── vercel.json
-
+'''
 ---
 
 ## API Endpoint
