@@ -11,7 +11,7 @@ The application converts natural language decision prompts into a weighted decis
 * Compare multiple options using weighted scoring
 * Interactive frontend for adjusting priorities and scores
 * FastAPI backend with REST API endpoints
-* Groq LLM integration for AI-assisted decision analysis
+* Gemini integration for AI-assisted decision analysis
 
 ## Example
 
@@ -38,7 +38,7 @@ The system assigns weights and scores to each criterion, then calculates an over
 
 * Python
 * FastAPI
-* Groq API
+* Google Gemini API
 
 ### Frontend
 
@@ -103,13 +103,30 @@ pip install -r requirements.txt
 Create a `.env` file:
 
 env
-GROQ_API_KEY=your_api_key
+GEMINI_API_KEY=your_gemini_api_key
 
 Start the server:
 
 ```bash
 uvicorn index:app --reload
 ```
+
+### Deploying on Render
+
+In your Render service, open **Settings** and replace the **Start Command**
+`uvicorn index:app --reload` with:
+
+```bash
+uvicorn index:app --host 0.0.0.0 --port $PORT
+```
+
+The `--reload` command is for local development: it binds to localhost on port
+8000, so Render cannot reach the service. The production command above binds to
+all interfaces and uses the port Render provides.
+
+Then open **Environment**, add `GEMINI_API_KEY` with your Gemini API key as its
+value, and save. Render will redeploy the service. Keep the key out of the
+frontend and repository.
 
 Open:
 
@@ -129,7 +146,7 @@ It was later expanded into a full-stack application with:
 * Interactive frontend interface
 * AI-generated criteria and scoring suggestions
 * REST API architecture
-* LLM integration using Groq
+* LLM integration using Google Gemini
 ---
 ## Author
 

@@ -35,5 +35,4 @@ async def ai_decision_matrix(request: Request):
 
     logger.info(f"Received AI decision matrix request with input: {user_input}")
     
-    return get_ai_decision_matrix(user_input)
-
+    return await get_ai_decision_matrix(user_input)
