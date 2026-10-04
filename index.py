@@ -1,7 +1,8 @@
-import os
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from routes.ai_routes import router as ai_router
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI(
     title="Weighted Decision Matrix API",
