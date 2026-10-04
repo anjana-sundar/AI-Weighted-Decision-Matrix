@@ -13,7 +13,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 GEMINI_API_URL = (
     "https://generativelanguage.googleapis.com/v1beta/"
-    "models/gemini-2.5-flash:generateContent"
+    "models/gemini-3.8-flash:generateContent"
 )
 SYSTEM_INSTRUCTION = """Convert natural decision-making text into structured JSON.
 
