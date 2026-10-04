@@ -16,9 +16,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {
-        "success": True,
-        "message": "API is running"
-    }
+    html_path = os.path.join(os.path.dirname(__file__), "index.html")
+    return FileResponse(html_path)
 
 app.include_router(ai_router)
