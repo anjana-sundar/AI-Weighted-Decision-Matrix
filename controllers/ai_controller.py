@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 logger = logging.getLogger(__name__)
 
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
-MODEL = "command-r-plus"
+MODEL = "command-r-plus-08-2024"
 API_URL = "https://api.cohere.com/v1/chat"
 
 SYSTEM_INSTRUCTION = """Convert natural decision-making text into structured JSON.
