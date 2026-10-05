@@ -131,6 +131,10 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .progress-ring-circle { transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .summary-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .summary-card:hover { background-color: rgba(107, 107, 107, .24); }
+        .summary-card .rank-label { color: #B8B8B8 !important; opacity: 1; }
+        .summary-card .score-percentage { color: #FFFFFF !important; }
+        .summary-card .option-heading-input { color: #FFFFFF !important; }
         .content-fade { transition: opacity 0.3s ease-in-out; }
         @keyframes ambient-drift { 0% { transform: scale(1.02) translate3d(-1.5%, -1%, 0); } 50% { transform: scale(1.12) translate3d(1.5%, 1%, 0); } 100% { transform: scale(1.06) translate3d(-.5%, 2%, 0); } }
         @keyframes shadow-drift { 0% { transform: translate3d(-2%, -1%, 0) rotate(-2deg); } 100% { transform: translate3d(2%, 1.5%, 0) rotate(2deg); } }
@@ -241,7 +245,7 @@
 
         state.options.forEach((optName, index) => {
             summaryContainer.innerHTML += `
-              <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent hover:bg-white transition-colors duration-300 relative group" data-option="${index}">
+              <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent transition-colors duration-300 relative group" data-option="${index}">
                 <div class="flex justify-between items-start relative z-10">
                   <div class="flex-grow mr-2">
                     <p class="text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label">Rank 1</p>
