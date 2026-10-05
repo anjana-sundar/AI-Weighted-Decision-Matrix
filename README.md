@@ -1,155 +1,120 @@
-# Weighted Decision Matrix AI
+# Weighted Decision Matrix
 
-An AI-powered decision support tool that helps users make structured decisions by generating weighted evaluation criteria instead of relying on traditional pros-and-cons lists.
+### A clearer way to make the choices that shape your life.
 
-The application converts natural language decision prompts into a weighted decision matrix using a Large Language Model (LLM), allowing users to compare alternatives based on multiple criteria and priorities.
+Choosing a job, a college, a course, or a new place to live can mean weighing very different priorities. A traditional pros-and-cons list gives every point equal space, even when some things matter much more to you than others.
 
-## Features
+The **Weighted Decision Matrix** turns that choice into a transparent, adjustable comparison. Describe your decision in everyday language and AI suggests options, evaluation criteria, priorities, and scores. You stay in control: change the assumptions, adjust the weights, and see how your priorities affect the result.
 
-* Generate decision matrices from natural language input
-* Automatically create decision criteria and assign weights
-* Compare multiple options using weighted scoring
-* Interactive frontend for adjusting priorities and scores
-* FastAPI backend with REST API endpoints
-* Gemini integration for AI-assisted decision analysis
+> A structured decision-support technique used in fields such as engineering, economics, operations research, and strategic planning—made approachable for everyday decisions.
 
-## Example
+## When it can help
 
-**Input**
+- Compare job offers by compensation, growth, flexibility, and commute.
+- Evaluate colleges or courses by cost, quality, location, and opportunity.
+- Weigh a move against the value of community, affordability, and career prospects.
+- Bring structure to any choice where several competing factors matter.
 
-text
-Should I pursue a Master's degree or start working after graduation?
+## How the matrix works
 
-**Generated Criteria**
-
-* Salary Potential
-* Career Growth
-* Learning Opportunities
-* Financial Cost
-* Work Experience
-
-The system assigns weights and scores to each criterion, then calculates an overall recommendation.
-
----
-
-## Tech Stack
-
-### Backend
-
-* Python
-* FastAPI
-* Google Gemini API
-
-### Frontend
-
-* HTML
-* JavaScript
-* Tailwind CSS
-
----
-
-## Project Structure
+Each criterion receives an importance **weight** from 1 to 10. Each option receives a **score** from 1 to 10 for that criterion. The matrix multiplies each score by its weight and adds the results:
 
 ```text
-decision/
-│
-├── controllers/
-│   └── ai_controller.py
-│
-├── routes/
-│   └── ai_routes.py
-│
-├── index.py
-├── index.html
-├── prototype_algorithm.py
-├── requirements.txt
-└── vercel.json
+Weighted total for an option = sum(criterion weight × option score)
 ```
----
 
-## API Endpoint
+The totals are normalized to a percentage of the highest possible score, making options easier to compare. A higher result indicates a closer fit with the weights and scores currently in the matrix—not a guaranteed “right” answer. The result is only as useful as its assumptions, so review and adjust the AI suggestions to reflect your own circumstances.
 
-### Generate Decision Matrix
+## Use it in three steps
 
-POST /ai
+1. **Describe the decision.** Name the alternatives and anything you already know about your priorities.
+2. **Review the suggested matrix.** AI creates a starting point with options, criteria, weights, and scores.
+3. **Make it yours.** Rename options or criteria, adjust weights and scores, add or remove rows, and compare the updated rankings.
 
-#### Request
+## Built with
 
-json
-{
-  "user_input": "Should I pursue a Master's degree or start working after graduation?"
-}
+| Layer | Technology |
+| --- | --- |
+| Interface | HTML, JavaScript, Tailwind CSS |
+| API | Python, FastAPI |
+| AI generation | Cohere API |
+| Hosting | Render |
 
+The Cohere API key belongs on the server, never in browser JavaScript or a public repository.
 
-#### Response
+## Run locally
 
-json
-{
-  "success": true,
-  "data": "{ generated decision matrix }"
-}
-
-
----
-
-## Running Locally
-
-Install dependencies:
+Install the Python dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create a `.env` file:
-
-env
-GEMINI_API_KEY=your_gemini_api_key
-
-Start the server:
+Set your Cohere API key in the terminal before starting the app:
 
 ```bash
+export COHERE_API_KEY="your_cohere_api_key"
 uvicorn index:app --reload
 ```
 
-### Deploying on Render
+Keep the key private and do not commit it to Git.
 
-In your Render service, open **Settings** and replace the **Start Command**
-`uvicorn index:app --reload` with:
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) to use the app, or visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to explore the API.
+
+## Deploy on Render
+
+In the Render service settings, use this **Start Command**:
 
 ```bash
 uvicorn index:app --host 0.0.0.0 --port $PORT
 ```
 
-The `--reload` command is for local development: it binds to localhost on port
-8000, so Render cannot reach the service. The production command above binds to
-all interfaces and uses the port Render provides.
+In **Environment**, add `COHERE_API_KEY` with your Cohere API key as its value, then save and deploy. Keep the key in Render's environment settings; do not add it to the frontend or commit it to Git.
 
-Then open **Environment**, add `GEMINI_API_KEY` with your Gemini API key as its
-value, and save. Render will redeploy the service. Keep the key out of the
-frontend and repository.
+## API
 
-Open:
+`POST /ai`
 
-http://127.0.0.1:8000/docs
+Request:
 
-to access the API documentation.
+```json
+{
+  "user_input": "Should I accept a higher-paying job with a longer commute or choose a more flexible role?"
+}
+```
+
+The response includes a generated matrix in `data`:
+
+```json
+{
+  "success": true,
+  "data": {
+    "title": "Choosing between job offers",
+    "options": ["Higher-paying role", "Flexible role"],
+    "criteria": []
+  }
+}
+```
+
+## Project files
+
+```text
+.
+├── controllers/
+│   └── ai_controller.py
+├── routes/
+│   └── ai_routes.py
+├── index.html
+├── index.py
+├── prototype_algorithm.py
+├── requirements.txt
+└── vercel.json
+```
+
+## A note on decisions
+
+This tool is designed to clarify trade-offs, not make important decisions for you. AI-generated scores are suggestions, not objective facts. Use your own knowledge, check the assumptions, and consider advice from people you trust before making high-stakes choices.
 
 ---
 
-## Development Journey
-
-The project began as a simple weighted scoring algorithm implemented in Python (`prototype_algorithm.py`), where users manually entered options, criteria, weights, and scores.
-
-It was later expanded into a full-stack application with:
-
-* FastAPI backend
-* Interactive frontend interface
-* AI-generated criteria and scoring suggestions
-* REST API architecture
-* LLM integration using Google Gemini
----
-## Author
-
-Anjana Sundar
-
-Computer Science Engineering Student
+**Anjana Sundar**

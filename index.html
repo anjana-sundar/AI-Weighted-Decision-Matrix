@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Equilibrium | Weighted Decision Matrix</title>
+    <title>Weighted Decision Matrix</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&amp;family=Geist:wght=400;500;600&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -13,53 +13,53 @@
         theme: {
           extend: {
             "colors": {
-                    "on-primary-container": "#7c839b",
-                    "on-secondary-fixed-variant": "#2f2ebe",
-                    "primary-fixed": "#dae2fd",
-                    "outline-variant": "#c6c6cd",
-                    "primary": "#000000",
-                    "on-surface": "#191c1e",
-                    "surface-container-highest": "#e0e3e5",
-                    "inverse-on-surface": "#eff1f3",
-                    "on-tertiary-fixed-variant": "#005047",
-                    "on-tertiary-fixed": "#00201c",
-                    "surface-container-high": "#e6e8ea",
-                    "surface-bright": "#f7f9fb",
-                    "on-tertiary-container": "#009485",
-                    "tertiary-fixed-dim": "#3cddc7",
-                    "surface-tint": "#565e74",
-                    "on-secondary": "#ffffff",
-                    "inverse-primary": "#bec6e0",
-                    "secondary-container": "#6063ee",
-                    "on-primary": "#ffffff",
-                    "tertiary-fixed": "#62fae3",
-                    "secondary": "#4648d4",
-                    "secondary-fixed": "#e1e0ff",
-                    "surface": "#f7f9fb",
-                    "background": "#f7f9fb",
-                    "surface-container": "#eceef0",
-                    "on-secondary-container": "#fffbff",
-                    "surface-dim": "#d8dadc",
-                    "inverse-surface": "#2d3133",
-                    "error": "#ba1a1a",
-                    "primary-container": "#131b2e",
-                    "outline": "#76777d",
-                    "surface-variant": "#e0e3e5",
-                    "on-background": "#191c1e",
-                    "tertiary": "#000000",
-                    "on-error-container": "#93000a",
-                    "primary-fixed-dim": "#bec6e0",
-                    "on-primary-fixed": "#131b2e",
-                    "surface-container-low": "#f2f4f6",
-                    "on-tertiary": "#ffffff",
-                    "on-error": "#ffffff",
-                    "on-surface-variant": "#45464d",
-                    "on-secondary-fixed": "#07006c",
-                    "tertiary-container": "#00201c",
-                    "error-container": "#ffdad6",
-                    "on-primary-fixed-variant": "#3f465c",
-                    "surface-container-lowest": "#ffffff",
-                    "secondary-fixed-dim": "#c0c1ff"
+                    "on-primary-container": "#B8B8B8",
+                    "on-secondary-fixed-variant": "#B8B8B8",
+                    "primary-fixed": "#3A3A3A",
+                    "outline-variant": "#6B6B6B",
+                    "primary": "#FFFFFF",
+                    "on-surface": "#FFFFFF",
+                    "surface-container-highest": "#3A3A3A",
+                    "inverse-on-surface": "#181818",
+                    "on-tertiary-fixed-variant": "#B8B8B8",
+                    "on-tertiary-fixed": "#FFFFFF",
+                    "surface-container-high": "#3A3A3A",
+                    "surface-bright": "#6B6B6B",
+                    "on-tertiary-container": "#FFFFFF",
+                    "tertiary-fixed-dim": "#6B6B6B",
+                    "surface-tint": "#B8B8B8",
+                    "on-secondary": "#181818",
+                    "inverse-primary": "#3A3A3A",
+                    "secondary-container": "#B8B8B8",
+                    "on-primary": "#181818",
+                    "tertiary-fixed": "#B8B8B8",
+                    "secondary": "#FFFFFF",
+                    "secondary-fixed": "#3A3A3A",
+                    "surface": "#252525",
+                    "background": "#181818",
+                    "surface-container": "#252525",
+                    "on-secondary-container": "#181818",
+                    "surface-dim": "#181818",
+                    "inverse-surface": "#FFFFFF",
+                    "error": "#FFFFFF",
+                    "primary-container": "#252525",
+                    "outline": "#6B6B6B",
+                    "surface-variant": "#3A3A3A",
+                    "on-background": "#FFFFFF",
+                    "tertiary": "#FFFFFF",
+                    "on-error-container": "#FFFFFF",
+                    "primary-fixed-dim": "#6B6B6B",
+                    "on-primary-fixed": "#181818",
+                    "surface-container-low": "#252525",
+                    "on-tertiary": "#181818",
+                    "on-error": "#181818",
+                    "on-surface-variant": "#B8B8B8",
+                    "on-secondary-fixed": "#FFFFFF",
+                    "tertiary-container": "#252525",
+                    "error-container": "#3A3A3A",
+                    "on-primary-fixed-variant": "#B8B8B8",
+                    "surface-container-lowest": "#252525",
+                    "secondary-fixed-dim": "#6B6B6B"
             },
             "borderRadius": {
                     "DEFAULT": "0.25rem",
@@ -102,45 +102,93 @@
       }
     </script>
     <style>
-        body { background-color: #f7f9fb; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); }
-        .ambient-glow { box-shadow: 0 32px 64px -12px rgba(70, 72, 212, 0.08); }
-        .matrix-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .matrix-cell:hover { background: rgba(70, 72, 212, 0.04); transform: translateX(4px); }
-        .custom-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: #e0e3e5; outline: none; }
-        .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: white; border: 1px solid #76777d; cursor: pointer; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: all 0.2s ease; }
-        .custom-slider::-webkit-slider-thumb:hover { transform: scale(1.25); border-color: #4648d4; box-shadow: 0 0 0 4px rgba(70, 72, 212, 0.1); }
-        .active-thumb::-webkit-slider-thumb { border-color: #4648d4; background: #4648d4; }
+        body { min-height: 100vh; background: #181818; color: #FFFFFF; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse at 4% 4%, rgba(107,107,107,.78), transparent 36%), radial-gradient(ellipse at 94% 18%, rgba(58,58,58,.8), transparent 34%), radial-gradient(ellipse at 55% 108%, rgba(37,37,37,.96), transparent 50%), linear-gradient(145deg, #252525 0%, #181818 50%, #3A3A3A 100%); }
+        body::after { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .28; background: linear-gradient(145deg, transparent 18%, rgba(0,0,0,.52) 35%, transparent 51%), linear-gradient(32deg, transparent 44%, rgba(107,107,107,.13) 62%, transparent 74%); }
+        main { position: relative; z-index: 1; }
+        .glass-panel { background: rgba(58, 58, 58, .48); backdrop-filter: blur(26px) saturate(110%); -webkit-backdrop-filter: blur(26px) saturate(110%); border: 1px solid rgba(184, 184, 184, .18); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
+        .ambient-glow { box-shadow: 0 30px 90px -38px rgba(0, 0, 0, .72), 0 16px 36px -24px rgba(0, 0, 0, .48); }
+        .matrix-cell { transition: background .25s ease, transform .25s ease; }
+        .matrix-cell:hover { background: rgba(255, 255, 255, .72); transform: translateX(3px); }
+        .custom-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: #6B6B6B; outline: none; }
+        .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; border: 1px solid #B8B8B8; cursor: pointer; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.35); transition: all 0.2s ease; }
+        .custom-slider::-webkit-slider-thumb:hover { transform: scale(1.25); border-color: #FFFFFF; box-shadow: 0 0 0 4px rgba(184, 184, 184, 0.14); }
+        .active-thumb::-webkit-slider-thumb { border-color: #FFFFFF; background: #FFFFFF; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
-        
+        .prompt-input { background: rgba(24,24,24,.78); color: #FFFFFF; box-shadow: inset 0 1px 3px rgba(0,0,0,.35); }
+        .prompt-input:focus { background: rgba(24,24,24,.96); }
+        .generate-button { background: #FFFFFF; color: #181818; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+        .generate-button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,.52); }
+        .generate-button:disabled { opacity: .75; cursor: wait; }
+        .prompt-chip { transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+        .prompt-chip:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.42); transform: translateY(-1px); }
+        .ai-status { min-height: 1.25rem; }
+        .ai-status.status-error { color: #FFFFFF; }
+        .ai-status.status-success { color: #B8B8B8; }
+        .ai-status.status-loading { color: #B8B8B8; }
+        .ai-status.status-loading::before { content: ""; width: 12px; height: 12px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin .75s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .progress-ring-circle { transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .summary-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .content-fade { transition: opacity 0.3s ease-in-out; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
     </style>
 </head>
 <body class="text-on-surface">
-<main class="flex flex-col items-center justify-center min-h-screen px-gutter py-xl gap-sm max-w-5xl mx-auto w-full">
+<main class="flex flex-col items-center min-h-screen px-gutter py-10 md:py-16 gap-6 max-w-6xl mx-auto w-full">
 
-  <section class="glass-panel ambient-glow rounded-3xl p-md w-full border border-secondary/20">
-    <div class="flex flex-col gap-xs">
-        <label for="ai-prompt-input" class="text-label-caps font-label-caps text-secondary uppercase tracking-wider">Generate Matrix via AI Strategy Engine</label>
-        <div class="flex gap-sm items-center mt-1">
+  <header class="w-full flex items-center justify-between mb-2">
+    <span class="text-sm font-medium tracking-[.12em] text-on-surface-variant uppercase">Weighted Decision Matrix</span>
+    <span class="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-on-surface-variant backdrop-blur-lg">
+      <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+      A thoughtful way to choose
+    </span>
+  </header>
+
+  <section class="w-full text-center pt-5 pb-2">
+    <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-[.14em] text-on-surface-variant shadow-sm backdrop-blur-lg">
+      Clarity for life's big decisions
+    </div>
+    <h1 class="mx-auto mt-5 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-[-.045em] text-on-surface sm:text-5xl md:text-6xl">
+      Big choices deserve<br class="hidden sm:block"/> more than a pros-and-cons list.
+    </h1>
+    <p class="mx-auto mt-5 max-w-2xl text-base leading-7 text-on-surface-variant sm:text-lg">
+      Give the things that matter most the weight they deserve. Compare your options with a clear, adjustable decision matrix, created from your own priorities.
+    </p>
+  </section>
+
+  <section class="glass-panel ambient-glow w-full rounded-[1.75rem] p-5 sm:p-7">
+    <div class="flex flex-col gap-4">
+        <div>
+          <label for="ai-prompt-input" class="block text-sm font-semibold text-on-surface">What are you deciding?</label>
+          <p class="mt-1 text-sm text-on-surface-variant">Describe your options and what matters to you. AI will suggest criteria, weights, and scores. You can edit everything.</p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div class="relative flex-grow">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/50">auto_awesome</span>
-                <input id="ai-prompt-input" type="text" placeholder="e.g., Decide between purchasing an electric car vs hybrid vs ICE commuter car..." class="w-full bg-surface border border-outline-variant/50 rounded-xl pl-12 pr-4 py-3 text-body-md focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all" />
+                <span class="material-symbols-outlined absolute left-4 top-4 text-secondary/70">edit_note</span>
+                <textarea id="ai-prompt-input" rows="2" placeholder="For example: Should I take a higher-paying job with a longer commute, or a flexible role with more room to grow?" class="prompt-input w-full resize-y rounded-2xl border border-white/90 pl-12 pr-4 py-3.5 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:border-secondary/50 transition-all"></textarea>
             </div>
-            <button id="ai-submit-btn" class="bg-secondary hover:bg-secondary-container text-on-secondary px-md h-[46px] rounded-xl font-label-caps text-label-caps flex items-center gap-xs shadow-md transition-all active:scale-95 whitespace-nowrap">
-                <span class="material-symbols-outlined text-[18px]">bolt</span> Generate
+            <button id="ai-submit-btn" type="button" class="generate-button inline-flex h-[52px] shrink-0 items-center justify-center gap-2 rounded-2xl px-6 font-semibold text-white transition-all active:scale-[.98] whitespace-nowrap">
+                <span id="ai-submit-label">Build my matrix</span>
             </button>
         </div>
-        <p id="ai-status-message" class="text-[12px] text-on-surface-variant/60 font-medium hidden mt-1 flex items-center gap-1"></p>
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-medium text-on-surface-variant/75">Try:</span>
+            <button type="button" class="prompt-chip rounded-full border border-white/90 bg-white/55 px-3 py-1.5 text-xs text-on-surface-variant" data-prompt="Should I accept a higher-paying job with a longer commute or choose a more flexible role with stronger career growth?">Compare job offers</button>
+            <button type="button" class="prompt-chip rounded-full border border-white/90 bg-white/55 px-3 py-1.5 text-xs text-on-surface-variant" data-prompt="Should I study computer science at a large, prestigious university or choose a smaller college with lower tuition and more personal support?">Choose a college</button>
+            <button type="button" class="prompt-chip rounded-full border border-white/90 bg-white/55 px-3 py-1.5 text-xs text-on-surface-variant" data-prompt="Should I move to a new city for career opportunities or stay close to family and my current support network?">Consider a move</button>
+          </div>
+          <p class="text-xs text-on-surface-variant/65">Your priorities. Your call.</p>
+        </div>
+        <p id="ai-status-message" class="ai-status hidden flex items-center gap-2 text-sm font-medium" role="status" aria-live="polite"></p>
     </div>
   </section>
 
-  <section id="matrix-component" class="glass-panel ambient-glow rounded-[2rem] p-lg w-full content-fade opacity-100">
+  <section id="matrix-component" class="glass-panel ambient-glow rounded-[2rem] p-5 sm:p-8 md:p-10 w-full content-fade opacity-100">
     <div class="flex flex-col md:flex-row justify-between items-end gap-md mb-xl">
       <div>
-        <span class="text-label-caps font-label-caps text-secondary mb-2 block uppercase">Current Project</span>
+        <span class="text-label-caps font-label-caps text-secondary mb-2 block uppercase">Your decision</span>
         <h2 id="project-title" class="text-headline-lg font-headline-lg">MBA vs. Startup Job vs. World Travel</h2>
       </div>
       <div class="flex items-center gap-sm">
@@ -197,14 +245,14 @@
               <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent hover:bg-white transition-colors duration-300 relative group" data-option="${index}">
                 <div class="flex justify-between items-start relative z-10">
                   <div class="flex-grow mr-2">
-                    <p class="text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label">Rank —</p>
+                    <p class="text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label">Rank 1</p>
                     <input type="text" value="${optName}" class="bg-transparent border-none p-0 focus:ring-2 focus:ring-secondary/30 rounded font-headline-md text-headline-md option-heading-input w-full" data-option="${index}"/>
                   </div>
                   <div class="flex items-center gap-2">
                       <div class="relative w-16 h-16 flex items-center justify-center shrink-0">
                         <svg class="w-full h-full -rotate-90">
-                          <circle cx="32" cy="32" fill="transparent" r="28" stroke="#e0e3e5" stroke-width="4"></circle>
-                          <circle class="progress-ring-circle" cx="32" cy="32" fill="transparent" r="28" stroke="#76777d" stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-linecap="round" stroke-width="4"></circle>
+                          <circle cx="32" cy="32" fill="transparent" r="28" stroke="#3A3A3A" stroke-width="4"></circle>
+                          <circle class="progress-ring-circle" cx="32" cy="32" fill="transparent" r="28" stroke="#6B6B6B" stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-linecap="round" stroke-width="4"></circle>
                         </svg>
                         <span class="absolute text-mono-data font-mono-data text-on-surface-variant score-percentage">0%</span>
                       </div>
@@ -333,14 +381,14 @@
                 card.classList.add('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
                 if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-secondary uppercase mb-1 rank-label';
                 if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-secondary score-percentage';
-                if(circle) circle.setAttribute('stroke', '#4648d4');
+                if(circle) circle.setAttribute('stroke', '#FFFFFF');
                 card.style.order = "1";
             } else {
                 card.classList.add('bg-surface-container-low', 'border-transparent');
                 card.classList.remove('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
                 if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label';
                 if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-on-surface-variant score-percentage';
-                if(circle) circle.setAttribute('stroke', '#76777d');
+                if(circle) circle.setAttribute('stroke', '#6B6B6B');
                 card.style.order = (rank + 1).toString();
             }
         });
@@ -456,24 +504,38 @@
         }
     });
 
+    document.querySelectorAll('.prompt-chip').forEach(button => {
+        button.addEventListener('click', () => {
+            const promptInput = document.getElementById('ai-prompt-input');
+            promptInput.value = button.dataset.prompt;
+            promptInput.focus();
+        });
+    });
+
+    function setAiStatus(message, type) {
+        const statusMsg = document.getElementById('ai-status-message');
+        statusMsg.textContent = message;
+        statusMsg.className = `ai-status flex items-center gap-2 text-sm font-medium status-${type}`;
+    }
+
     // AI Integration Model Pipelines Orchestration API Interceptors Orchestration Block Handlers Layer Setup
     document.getElementById('ai-submit-btn').addEventListener('click', async () => {
         const promptInput = document.getElementById('ai-prompt-input');
-        const statusMsg = document.getElementById('ai-status-message');
         const matrixComponent = document.getElementById('matrix-component');
+        const submitButton = document.getElementById('ai-submit-btn');
+        const submitLabel = document.getElementById('ai-submit-label');
         const query = promptInput.value.trim();
 
         if(!query) {
-            statusMsg.innerText = "Please provide an actionable prompt strategy context.";
-            statusMsg.className = "text-[12px] text-error font-medium mt-1 flex items-center gap-1";
-            statusMsg.classList.remove('hidden');
+            setAiStatus("Tell us what you're deciding so we can build your matrix.", "error");
+            promptInput.focus();
             return;
         }
 
         try {
-            statusMsg.innerHTML = `<span class="animate-spin inline-block w-3 h-3 border-2 border-current border-t-transparent text-secondary rounded-full"></span> Contacting FastAPI orchestration endpoint...`;
-            statusMsg.className = "text-[12px] text-secondary font-medium mt-1 flex items-center gap-1";
-            statusMsg.classList.remove('hidden');
+            submitButton.disabled = true;
+            submitLabel.textContent = "Building your matrix…";
+            setAiStatus("Considering your options and priorities…", "loading");
 
             const response = await fetch('https://ai-weighted-decision-matrix.onrender.com/ai', {
                 method: 'POST',
@@ -482,7 +544,13 @@
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP Error response code profile mismatch: ${response.status}`);
+                if (response.status === 503) {
+                    throw new Error("The AI service needs configuration. Please try again later.");
+                }
+                if (response.status === 502 || response.status === 504) {
+                    throw new Error("We couldn't reach the AI service just now. Please try again in a moment.");
+                }
+                throw new Error(`We couldn't build the matrix (request failed: ${response.status}). Please try again.`);
             }
 
             const rawPayload = await response.json();
@@ -525,13 +593,14 @@
             setTimeout(() => {
                 renderMatrix();
                 matrixComponent.classList.replace('opacity-0', 'opacity-100');
-                statusMsg.innerHTML = `<span class="material-symbols-outlined text-[14px]">check_circle</span> Matrix layout calculated and updated successfully.`;
-                statusMsg.className = "text-[12px] text-emerald-600 font-medium mt-1 flex items-center gap-1";
+                setAiStatus("Your matrix is ready. Adjust the weights and scores to reflect what matters most to you.", "success");
             }, 300);
 
         } catch (err) {
-            statusMsg.innerText = `Network/Processing Error Context: ${err.message}`;
-            statusMsg.className = "text-[12px] text-error font-medium mt-1 flex items-center gap-1";
+            setAiStatus(err.message || "Something went wrong. Please try again.", "error");
+        } finally {
+            submitButton.disabled = false;
+            submitLabel.textContent = "Build my matrix";
         }
     });
 
