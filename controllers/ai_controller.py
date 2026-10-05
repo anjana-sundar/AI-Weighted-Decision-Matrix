@@ -1,22 +1,14 @@
-import asyncio
 import json
 import logging
-import os
-
 import httpx
-from dotenv import load_dotenv
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
-load_dotenv()
-
 logger = logging.getLogger(__name__)
 
-# Read models directly from Render Environment Variables with safe defaults
-PRIMARY_MODEL = os.getenv("GEMINI_PRIMARY_MODEL", "gemini-3.8-flash")
-FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.8-pro")
-
-API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models"
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+MODEL = "command-r-plus"
+API_URL = "https://api.cohere.com/v1/chat"
 
 SYSTEM_INSTRUCTION = """Convert natural decision-making text into structured JSON.
 
@@ -37,121 +29,48 @@ Return only valid JSON with this shape:
 Use scores and weights from 1 to 10, infer missing values realistically,
 and keep criteria names short."""
 
-
-async def call_gemini_with_retry(
-    client: httpx.AsyncClient,
-    model: str,
-    api_key: str,
-    payload: dict,
-    max_retries: int = 4,
-) -> dict:
-    """Sends generateContent request with exponential backoff on 503 and 429."""
-    url = f"{API_BASE_URL}/{model}:generateContent"
-
-    for attempt in range(max_retries):
-        try:
-            response = await client.post(
-                url,
-                headers={"x-goog-api-key": api_key},
-                json=payload,
-            )
-
-            # Retry on 503 (Server busy/High demand) and 429 (Rate limit)
-            if response.status_code in (503, 429):
-                wait_time = 2**attempt  # 1s, 2s, 4s, 8s...
-                logger.warning(
-                    "Model %s returned HTTP %s (attempt %s/%s). Retrying in %ss...",
-                    model,
-                    response.status_code,
-                    attempt + 1,
-                    max_retries,
-                    wait_time,
-                )
-                await asyncio.sleep(wait_time)
-                continue
-
-            response.raise_for_status()
-            return response.json()
-
-        except httpx.HTTPStatusError as exc:
-            logger.error("HTTP error from Gemini %s: %s", model, exc.response.text)
-            raise
-        except (httpx.TimeoutException, httpx.RequestError) as exc:
-            if attempt == max_retries - 1:
-                raise
-            await asyncio.sleep(2**attempt)
-
-    raise httpx.HTTPStatusError(
-        f"Model {model} unavailable after {max_retries} attempts",
-        request=None,  # type: ignore
-        response=response,
-    )
-
-
 async def get_ai_decision_matrix(user_input: str):
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        raise HTTPException(
-            status_code=503,
-            detail="AI service is not configured. Set GEMINI_API_KEY.",
-        )
-
     request_body = {
-        "system_instruction": {"parts": [{"text": SYSTEM_INSTRUCTION}]},
-        "contents": [{"role": "user", "parts": [{"text": user_input}]}],
-        "generationConfig": {
-            "temperature": 0.6,
-            "maxOutputTokens": 4096,
-            "responseMimeType": "application/json",
-        },
+        "model": MODEL,
+        "message": f"Generate a JSON based on this input: {user_input}",
+        "preamble": SYSTEM_INSTRUCTION,
+        "temperature": 0.6,
+        "response_format": {"type": "json_object"}
     }
 
-    result = None
     async with httpx.AsyncClient(timeout=60.0) as client:
-        # 1. Attempt with primary model
         try:
-            result = await call_gemini_with_retry(
-                client, PRIMARY_MODEL, api_key, request_body
+            response = await client.post(
+                API_URL,
+                headers={
+                    "Authorization": f"Bearer {COHERE_API_KEY}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                json=request_body,
             )
-        except Exception as exc:
-            logger.warning(
-                "Primary model %s failed: %s. Attempting fallback to %s...",
-                PRIMARY_MODEL,
-                exc,
-                FALLBACK_MODEL,
+            response.raise_for_status()
+            result = response.json()
+            
+            parsed_result = json.loads(result["text"])
+            
+            return JSONResponse(
+                content={
+                    "success": True,
+                    "data": parsed_result,
+                }
             )
-            # 2. Attempt with fallback model
-            try:
-                result = await call_gemini_with_retry(
-                    client, FALLBACK_MODEL, api_key, request_body
-                )
-            except Exception as final_exc:
-                logger.exception("Both primary and fallback models failed")
-                raise HTTPException(
-                    status_code=502,
-                    detail="AI provider is currently unavailable. Please try again later.",
-                ) from final_exc
-
-    # Parse and validate the response
-    try:
-        text = "".join(
-            part["text"]
-            for part in result["candidates"][0]["content"]["parts"]
-            if "text" in part
-        )
-        parsed_result = json.loads(text)
-        if not isinstance(parsed_result, dict):
-            raise ValueError("Gemini response must be a JSON object")
-    except (KeyError, IndexError, TypeError, ValueError) as exc:
-        logger.exception("Gemini API returned an invalid decision matrix response")
-        raise HTTPException(
-            status_code=502,
-            detail="AI provider returned an invalid decision matrix structure",
-        ) from exc
-
-    return JSONResponse(
-        content={
-            "success": True,
-            "data": parsed_result,
-        }
-    )
+            
+        except httpx.HTTPStatusError as exc:
+            logger.error("HTTP error from Cohere: %s", exc.response.text)
+            raise HTTPException(
+                status_code=502,
+                detail=f"Cohere API error: {exc.response.text}"
+            ) from exc
+            
+        except (KeyError, TypeError, ValueError) as exc:
+            logger.exception("Cohere API returned an invalid JSON response")
+            raise HTTPException(
+                status_code=502,
+                detail="Cohere returned malformed JSON data"
+            ) from exc
