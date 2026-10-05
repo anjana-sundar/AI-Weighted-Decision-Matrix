@@ -12,9 +12,10 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Primary and fallback model endpoints
-PRIMARY_MODEL = "gemini-2.5-flash"
-FALLBACK_MODEL = "gemini-1.5-flash"
+# Read models directly from Render Environment Variables with safe defaults
+PRIMARY_MODEL = os.getenv("GEMINI_PRIMARY_MODEL", "gemini-3.8-flash")
+FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.8-pro")
+
 API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models"
 
 SYSTEM_INSTRUCTION = """Convert natural decision-making text into structured JSON.
@@ -42,9 +43,9 @@ async def call_gemini_with_retry(
     model: str,
     api_key: str,
     payload: dict,
-    max_retries: int = 3,
+    max_retries: int = 4,
 ) -> dict:
-    """Sends a generateContent request with exponential backoff on 503 and 429."""
+    """Sends generateContent request with exponential backoff on 503 and 429."""
     url = f"{API_BASE_URL}/{model}:generateContent"
 
     for attempt in range(max_retries):
@@ -55,9 +56,9 @@ async def call_gemini_with_retry(
                 json=payload,
             )
 
-            # Retry on 503 (Overloaded) and 429 (Transient rate limit)
+            # Retry on 503 (Server busy/High demand) and 429 (Rate limit)
             if response.status_code in (503, 429):
-                wait_time = 2**attempt  # 1s, 2s, 4s...
+                wait_time = 2**attempt  # 1s, 2s, 4s, 8s...
                 logger.warning(
                     "Model %s returned HTTP %s (attempt %s/%s). Retrying in %ss...",
                     model,
@@ -73,7 +74,6 @@ async def call_gemini_with_retry(
             return response.json()
 
         except httpx.HTTPStatusError as exc:
-            # If not a retryable code, fail fast
             logger.error("HTTP error from Gemini %s: %s", model, exc.response.text)
             raise
         except (httpx.TimeoutException, httpx.RequestError) as exc:
@@ -107,7 +107,7 @@ async def get_ai_decision_matrix(user_input: str):
     }
 
     result = None
-    async with httpx.AsyncClient(timeout=45.0) as client:
+    async with httpx.AsyncClient(timeout=60.0) as client:
         # 1. Attempt with primary model
         try:
             result = await call_gemini_with_retry(
@@ -132,7 +132,7 @@ async def get_ai_decision_matrix(user_input: str):
                     detail="AI provider is currently unavailable. Please try again later.",
                 ) from final_exc
 
-    # Parse and validate the JSON candidate
+    # Parse and validate the response
     try:
         text = "".join(
             part["text"]
