@@ -103,8 +103,8 @@
     </script>
     <style>
         body { min-height: 100vh; background: #181818; color: #FFFFFF; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse at 4% 4%, rgba(107,107,107,.78), transparent 36%), radial-gradient(ellipse at 94% 18%, rgba(58,58,58,.8), transparent 34%), radial-gradient(ellipse at 55% 108%, rgba(37,37,37,.96), transparent 50%), linear-gradient(145deg, #252525 0%, #181818 50%, #3A3A3A 100%); }
-        body::after { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .28; background: linear-gradient(145deg, transparent 18%, rgba(0,0,0,.52) 35%, transparent 51%), linear-gradient(32deg, transparent 44%, rgba(107,107,107,.13) 62%, transparent 74%); }
+        body::before { content: ""; position: fixed; inset: -6%; z-index: 0; pointer-events: none; background: radial-gradient(ellipse at 4% 4%, rgba(107,107,107,.78), transparent 36%), radial-gradient(ellipse at 94% 18%, rgba(58,58,58,.8), transparent 34%), radial-gradient(ellipse at 55% 108%, rgba(37,37,37,.96), transparent 50%), linear-gradient(145deg, #252525 0%, #181818 50%, #3A3A3A 100%); transform-origin: center; animation: ambient-drift 32s ease-in-out infinite alternate; will-change: transform; }
+        body::after { content: ""; position: fixed; inset: -10%; z-index: 0; pointer-events: none; opacity: .28; background: linear-gradient(145deg, transparent 18%, rgba(0,0,0,.52) 35%, transparent 51%), linear-gradient(32deg, transparent 44%, rgba(107,107,107,.13) 62%, transparent 74%); animation: shadow-drift 42s ease-in-out infinite alternate; will-change: transform; }
         main { position: relative; z-index: 1; }
         .glass-panel { background: rgba(58, 58, 58, .48); backdrop-filter: blur(26px) saturate(110%); -webkit-backdrop-filter: blur(26px) saturate(110%); border: 1px solid rgba(184, 184, 184, .18); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
         .ambient-glow { box-shadow: 0 30px 90px -38px rgba(0, 0, 0, .72), 0 16px 36px -24px rgba(0, 0, 0, .48); }
@@ -117,11 +117,12 @@
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
         .prompt-input { background: rgba(24,24,24,.78); color: #FFFFFF; box-shadow: inset 0 1px 3px rgba(0,0,0,.35); }
         .prompt-input:focus { background: rgba(24,24,24,.96); }
-        .generate-button { background: #FFFFFF; color: #181818; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+        .generate-button { background: #FFFFFF; color: #181818 !important; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
         .generate-button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,.52); }
         .generate-button:disabled { opacity: .75; cursor: wait; }
-        .prompt-chip { transition: background .2s ease, border-color .2s ease, transform .2s ease; }
-        .prompt-chip:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.42); transform: translateY(-1px); }
+        .prompt-chip { color: #FFFFFF; background: rgba(24,24,24,.72); border-color: rgba(184,184,184,.48); transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease; }
+        .prompt-chip:hover, .prompt-chip:focus-visible { color: #181818; background: #FFFFFF; border-color: #FFFFFF; transform: translateY(-1px); }
+        button:focus-visible, textarea:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 3px; }
         .ai-status { min-height: 1.25rem; }
         .ai-status.status-error { color: #FFFFFF; }
         .ai-status.status-success { color: #B8B8B8; }
@@ -130,8 +131,14 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .progress-ring-circle { transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .summary-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .summary-card:hover { background-color: rgba(107, 107, 107, .24); }
+        .summary-card .rank-label { color: #B8B8B8 !important; opacity: 1; }
+        .summary-card .score-percentage { color: #FFFFFF !important; }
+        .summary-card .option-heading-input { color: #FFFFFF !important; }
         .content-fade { transition: opacity 0.3s ease-in-out; }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+        @keyframes ambient-drift { 0% { transform: scale(1.02) translate3d(-1.5%, -1%, 0); } 50% { transform: scale(1.12) translate3d(1.5%, 1%, 0); } 100% { transform: scale(1.06) translate3d(-.5%, 2%, 0); } }
+        @keyframes shadow-drift { 0% { transform: translate3d(-2%, -1%, 0) rotate(-2deg); } 100% { transform: translate3d(2%, 1.5%, 0) rotate(2deg); } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
     </style>
 </head>
 <body class="text-on-surface">
@@ -139,10 +146,6 @@
 
   <header class="w-full flex items-center justify-between mb-2">
     <span class="text-sm font-medium tracking-[.12em] text-on-surface-variant uppercase">Weighted Decision Matrix</span>
-    <span class="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-on-surface-variant backdrop-blur-lg">
-      <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
-      A thoughtful way to choose
-    </span>
   </header>
 
   <section class="w-full text-center pt-5 pb-2">
@@ -168,16 +171,16 @@
                 <span class="material-symbols-outlined absolute left-4 top-4 text-secondary/70">edit_note</span>
                 <textarea id="ai-prompt-input" rows="2" placeholder="For example: Should I take a higher-paying job with a longer commute, or a flexible role with more room to grow?" class="prompt-input w-full resize-y rounded-2xl border border-white/90 pl-12 pr-4 py-3.5 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-secondary/30 focus:border-secondary/50 transition-all"></textarea>
             </div>
-            <button id="ai-submit-btn" type="button" class="generate-button inline-flex h-[52px] shrink-0 items-center justify-center gap-2 rounded-2xl px-6 font-semibold text-white transition-all active:scale-[.98] whitespace-nowrap">
+            <button id="ai-submit-btn" type="button" class="generate-button inline-flex h-[52px] shrink-0 items-center justify-center gap-2 rounded-2xl px-6 font-semibold transition-all active:scale-[.98] whitespace-nowrap">
                 <span id="ai-submit-label">Build my matrix</span>
             </button>
         </div>
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-medium text-on-surface-variant/75">Try:</span>
-            <button type="button" class="prompt-chip rounded-full border border-white/90 bg-white/55 px-3 py-1.5 text-xs text-on-surface-variant" data-prompt="Should I accept a higher-paying job with a longer commute or choose a more flexible role with stronger career growth?">Compare job offers</button>
-            <button type="button" class="prompt-chip rounded-full border border-white/90 bg-white/55 px-3 py-1.5 text-xs text-on-surface-variant" data-prompt="Should I study computer science at a large, prestigious university or choose a smaller college with lower tuition and more personal support?">Choose a college</button>
-            <button type="button" class="prompt-chip rounded-full border border-white/90 bg-white/55 px-3 py-1.5 text-xs text-on-surface-variant" data-prompt="Should I move to a new city for career opportunities or stay close to family and my current support network?">Consider a move</button>
+            <button type="button" class="prompt-chip rounded-full border px-3 py-1.5 text-xs" data-prompt="Should I accept a higher-paying job with a longer commute or choose a more flexible role with stronger career growth?">Compare job offers</button>
+            <button type="button" class="prompt-chip rounded-full border px-3 py-1.5 text-xs" data-prompt="Should I study computer science at a large, prestigious university or choose a smaller college with lower tuition and more personal support?">Choose a college</button>
+            <button type="button" class="prompt-chip rounded-full border px-3 py-1.5 text-xs" data-prompt="Should I move to a new city for career opportunities or stay close to family and my current support network?">Consider a move</button>
           </div>
           <p class="text-xs text-on-surface-variant/65">Your priorities. Your call.</p>
         </div>
@@ -242,7 +245,7 @@
 
         state.options.forEach((optName, index) => {
             summaryContainer.innerHTML += `
-              <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent hover:bg-white transition-colors duration-300 relative group" data-option="${index}">
+              <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent transition-colors duration-300 relative group" data-option="${index}">
                 <div class="flex justify-between items-start relative z-10">
                   <div class="flex-grow mr-2">
                     <p class="text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label">Rank 1</p>
@@ -543,17 +546,19 @@
                 body: JSON.stringify({ user_input: query })
             });
 
+            const rawPayload = await response.json().catch(() => ({}));
             if (!response.ok) {
                 if (response.status === 503) {
-                    throw new Error("The AI service needs configuration. Please try again later.");
+                    throw new Error("The AI service is not configured yet. Please try again later.");
                 }
                 if (response.status === 502 || response.status === 504) {
-                    throw new Error("We couldn't reach the AI service just now. Please try again in a moment.");
+                    throw new Error(rawPayload.detail || "The AI service is temporarily unavailable. Please try again in a moment.");
                 }
-                throw new Error(`We couldn't build the matrix (request failed: ${response.status}). Please try again.`);
+                if (response.status >= 500) {
+                    throw new Error("The AI service encountered an internal error. Please try again shortly.");
+                }
+                throw new Error(rawPayload.detail || `We couldn't build the matrix (request failed: ${response.status}). Please try again.`);
             }
-
-            const rawPayload = await response.json();
             
             // --- DATA NORMALIZATION LAYER ---
             let parsedData = rawPayload;
