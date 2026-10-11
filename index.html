@@ -136,6 +136,7 @@
         .progress-ring-circle { transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .summary-container-grid { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(min(100%, 280px), 1fr); gap: 24px; overflow-x: auto; padding: 10px 6px 18px; scroll-snap-type: x proximity; scrollbar-color: #6B6B6B transparent; }
         .summary-card { min-width: 0; scroll-snap-align: start; transform-origin: center; transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease; }
+        .summary-card.is-top-ranked { border-color: #FFFFFF; }
         .summary-card:hover, .summary-card:focus-within { background-color: rgba(107, 107, 107, .24); transform: scale(1.025); z-index: 2; }
         .summary-card .rank-label { color: #B8B8B8 !important; opacity: 1; }
         .summary-card .score-percentage { color: #FFFFFF !important; }
@@ -424,13 +425,13 @@
 
             if (rank === 1 && score > 0) {
                 card.classList.remove('bg-surface-container-low', 'border-transparent');
-                card.classList.add('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
+                card.classList.add('bg-surface-container-lowest', 'is-top-ranked', 'shadow-lg');
                 if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-secondary uppercase mb-1 rank-label';
                 if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-secondary score-percentage';
                 if(circle) circle.setAttribute('stroke', '#FFFFFF');
             } else {
                 card.classList.add('bg-surface-container-low', 'border-transparent');
-                card.classList.remove('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
+                card.classList.remove('bg-surface-container-lowest', 'is-top-ranked', 'shadow-lg');
                 if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label';
                 if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-on-surface-variant score-percentage';
                 if(circle) circle.setAttribute('stroke', '#6B6B6B');

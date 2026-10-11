@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 load_dotenv()
 
 logger = logging.getLogger(__name__)
-MODEL = "command-r-plus-08-2024"
+MODEL = "command-r7b-12-2024"
 API_URL = "https://api.cohere.com/v1/chat"
 
 SYSTEM_INSTRUCTION = """Convert natural decision-making text into structured JSON.
@@ -46,6 +46,7 @@ async def get_ai_decision_matrix(user_input: str):
         "model": MODEL,
         "message": f"Generate a JSON based on this input: {user_input}",
         "preamble": SYSTEM_INSTRUCTION,
+        "max_tokens": 1200,
         "temperature": 0.6,
         "response_format": {"type": "json_object"},
     }
