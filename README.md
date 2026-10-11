@@ -1,4 +1,4 @@
-# Weighted Decision Matrix
+# AI Weighted Decision Matrix
 
 AI-powered decision support tool that converts natural language decisions into structured weighted decision matrices using FastAPI and AI.
 
