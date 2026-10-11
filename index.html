@@ -109,7 +109,11 @@
         .glass-panel { background: rgba(58, 58, 58, .48); backdrop-filter: blur(26px) saturate(110%); -webkit-backdrop-filter: blur(26px) saturate(110%); border: 1px solid rgba(184, 184, 184, .18); box-shadow: inset 0 1px 0 rgba(255,255,255,.12); }
         .ambient-glow { box-shadow: 0 30px 90px -38px rgba(0, 0, 0, .72), 0 16px 36px -24px rgba(0, 0, 0, .48); }
         .matrix-cell { transition: background .25s ease, transform .25s ease; }
-        .matrix-cell:hover { background: rgba(255, 255, 255, .72); transform: translateX(3px); }
+        .matrix-cell:hover, .matrix-cell:focus-within { background: rgba(107, 107, 107, .34); transform: translateX(3px); }
+        .slider-control { min-width: 0; }
+        .slider-control .rating-label, .slider-control .weight-label { color: #B8B8B8; transition: color .2s ease; }
+        .slider-control:hover .rating-label, .slider-control:hover .weight-label,
+        .slider-control:focus-within .rating-label, .slider-control:focus-within .weight-label { color: #FFFFFF; }
         .custom-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: #6B6B6B; outline: none; }
         .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; border: 1px solid #B8B8B8; cursor: pointer; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.35); transition: all 0.2s ease; }
         .custom-slider::-webkit-slider-thumb:hover { transform: scale(1.25); border-color: #FFFFFF; box-shadow: 0 0 0 4px rgba(184, 184, 184, 0.14); }
@@ -245,6 +249,21 @@
         ]
     };
 
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[char]);
+    }
+
+    function clampScore(value, fallback = 5) {
+        const number = Number(value);
+        return Number.isFinite(number) ? Math.max(1, Math.min(10, Math.round(number))) : fallback;
+    }
+
     // Render Matrix Components Layout System Completely Based on Current state Configuration Data
     function renderMatrix() {
         document.getElementById('project-title').innerText = state.title;
@@ -260,12 +279,13 @@
         matrixGrid.style.minWidth = `${Math.max(800, 240 + state.options.length * optionColumnWidth + 48 + (state.options.length + 1) * 8)}px`;
 
         state.options.forEach((optName, index) => {
+            const safeOptionName = escapeHtml(optName);
             summaryContainer.innerHTML += `
               <div class="summary-card bg-surface-container-low p-md rounded-2xl border-2 border-transparent transition-colors duration-300 relative group" data-option="${index}">
                 <div class="flex justify-between items-start relative z-10">
                   <div class="flex-grow mr-2">
                     <p class="text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label">Rank 1</p>
-                    <textarea rows="2" aria-label="Option name" title="${optName}" class="bg-transparent border-none p-0 focus:ring-2 focus:ring-secondary/30 rounded font-headline-md text-headline-md option-heading-input w-full" data-option="${index}">${optName}</textarea>
+                    <textarea rows="2" aria-label="Option name" title="${safeOptionName}" class="bg-transparent border-none p-0 focus:ring-2 focus:ring-secondary/30 rounded font-headline-md text-headline-md option-heading-input w-full" data-option="${index}">${safeOptionName}</textarea>
                   </div>
                   <div class="flex items-center gap-2">
                       <div class="relative score-ring flex items-center justify-center">
@@ -290,7 +310,8 @@
         
         let headerHtml = `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase flex items-center">Criteria &amp; Weight</div>`;
         state.options.forEach(optName => {
-            headerHtml += `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase text-center option-column-header truncate px-1" title="${optName}">${optName}</div>`;
+            const safeOptionName = escapeHtml(optName);
+            headerHtml += `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase text-center option-column-header truncate px-1" title="${safeOptionName}">${safeOptionName}</div>`;
         });
         headerHtml += `<div class="text-label-caps font-label-caps text-on-surface-variant opacity-60 uppercase text-center flex items-center justify-center"></div>`; // spacer column matching action buttons layout alignment
         gridHeaderRow.innerHTML = headerHtml;
@@ -300,11 +321,12 @@
         rowsContainer.innerHTML = '';
 
         state.criteria.forEach((crit, rIdx) => {
+            const safeCriterionName = escapeHtml(crit.name);
             let rowHtml = `
             <div class="grid grid-cols-[240px_repeat(${state.options.length},_1fr)_48px] gap-xs items-center matrix-cell p-sm rounded-xl criteria-row group/row" data-row="${rIdx}">
                 <div class="space-y-1">
-                  <input class="bg-transparent border-none p-0 focus:ring-0 font-headline-md text-body-md w-full criteria-name-input" type="text" value="${crit.name}"/>
-                  <div class="flex items-center gap-xs">
+                  <input class="bg-transparent border-none p-0 focus:ring-0 font-headline-md text-body-md w-full criteria-name-input" type="text" value="${safeCriterionName}"/>
+                  <div class="slider-control flex items-center gap-xs">
                     <span class="text-label-caps font-label-caps text-secondary weight-label">Wt: ${crit.weight}</span>
                     <input class="custom-slider active-thumb weight-slider" max="10" min="1" type="range" value="${crit.weight}"/>
                   </div>
@@ -313,7 +335,7 @@
             for(let oIdx = 0; oIdx < state.options.length; oIdx++) {
                 const val = crit.ratings[oIdx] !== undefined ? crit.ratings[oIdx] : 5;
                 rowHtml += `
-                <div class="flex flex-col items-center gap-1">
+                <div class="slider-control flex flex-col items-center gap-1">
                   <span class="text-mono-data font-mono-data rating-label">${val}/10</span>
                   <input class="custom-slider rating-slider" data-option="${oIdx}" max="10" min="1" type="range" value="${val}"/>
                 </div>`;
@@ -406,14 +428,12 @@
                 if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-secondary uppercase mb-1 rank-label';
                 if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-secondary score-percentage';
                 if(circle) circle.setAttribute('stroke', '#FFFFFF');
-                card.style.order = "1";
             } else {
                 card.classList.add('bg-surface-container-low', 'border-transparent');
                 card.classList.remove('bg-surface-container-lowest', 'border-secondary', 'shadow-lg', 'scale-105');
                 if(rankLabel) rankLabel.className = 'text-label-caps font-label-caps text-on-surface-variant/60 uppercase mb-1 rank-label';
                 if(scoreLabel) scoreLabel.className = 'absolute text-mono-data font-mono-data text-on-surface-variant score-percentage';
                 if(circle) circle.setAttribute('stroke', '#6B6B6B');
-                card.style.order = (rank + 1).toString();
             }
         });
     }
@@ -444,12 +464,16 @@
                 const oIdx = parseInt(e.target.dataset.option);
                 state.options[oIdx] = e.target.value.trim() || `Option ${oIdx + 1}`;
                 
-                // Track update header strings live matchers layouts execution bounds
                 const headers = document.querySelectorAll('.option-column-header');
                 if(headers[oIdx]) {
-                    headers[oIdx].innerText = state.options[oIdx];
+                    headers[oIdx].textContent = state.options[oIdx];
                     headers[oIdx].setAttribute('title', state.options[oIdx]);
                 }
+                e.target.setAttribute('title', state.options[oIdx]);
+            });
+            input.addEventListener('blur', (e) => {
+                const oIdx = parseInt(e.target.dataset.option);
+                e.target.value = state.options[oIdx];
             });
         });
 
@@ -500,7 +524,10 @@
 
     // WORKFLOW: Add Alternative Option Targets (CRUD - Create Option)
     document.getElementById('add-option-btn').addEventListener('click', () => {
-        const nextIdIndex = state.options.length + 1;
+        let nextIdIndex = state.options.length + 1;
+        while(state.options.some(option => option.toLowerCase() === `alternative ${nextIdIndex}`.toLowerCase())) {
+            nextIdIndex++;
+        }
         state.options.push(`Alternative ${nextIdIndex}`);
         state.criteria.forEach(crit => {
             crit.ratings.push(5);
@@ -582,31 +609,47 @@
             }
             
             // --- DATA NORMALIZATION LAYER ---
-            let parsedData = rawPayload;
-            if (rawPayload.data && typeof rawPayload.data === 'string') {
-                parsedData = JSON.parse(rawPayload.data);
-            } else if (rawPayload.data && typeof rawPayload.data === 'object') {
-                parsedData = rawPayload.data;
+            const hasResponseData = rawPayload && typeof rawPayload === 'object'
+                && Object.prototype.hasOwnProperty.call(rawPayload, 'data');
+            let parsedData = hasResponseData ? rawPayload.data : rawPayload;
+            if (typeof parsedData === 'string') {
+                parsedData = JSON.parse(parsedData);
+            }
+            if (!parsedData || typeof parsedData !== 'object' || Array.isArray(parsedData)) {
+                throw new Error("The AI response didn't contain a usable decision matrix. Please try a more specific prompt.");
             }
 
-            const targetOptions = parsedData.options || parsedData.alternatives || ["Choice A", "Choice B"];
-            const rawCriteria = parsedData.criteria || [];
+            const suppliedOptions = parsedData.options ?? parsedData.alternatives;
+            const targetOptions = Array.isArray(suppliedOptions)
+                ? suppliedOptions.map(option => String(option ?? '').trim()).filter(Boolean)
+                : [];
+            if (targetOptions.length === 0) targetOptions.push("Choice A", "Choice B");
+            const rawCriteria = Array.isArray(parsedData.criteria) ? parsedData.criteria : [];
 
-            const normalizedCriteria = rawCriteria.map(crit => {
+            const normalizedCriteria = rawCriteria
+                .filter(crit => crit && typeof crit === 'object')
+                .map(crit => {
                 let ratingsArray = [];
                 if (Array.isArray(crit.ratings)) {
-                    ratingsArray = crit.ratings;
+                    ratingsArray = targetOptions.map((_, index) => clampScore(crit.ratings[index]));
                 } else if (crit.scores && typeof crit.scores === 'object') {
-                    ratingsArray = targetOptions.map(optName => crit.scores[optName] ?? 5);
+                    ratingsArray = targetOptions.map(optName => clampScore(crit.scores[optName]));
                 } else {
                     ratingsArray = Array(targetOptions.length).fill(5);
                 }
                 return {
                     name: crit.name || "Unnamed Metric",
-                    weight: crit.weight ?? 5,
+                    weight: clampScore(crit.weight),
                     ratings: ratingsArray
                 };
             });
+            if (normalizedCriteria.length === 0) {
+                normalizedCriteria.push({
+                    name: "Overall fit",
+                    weight: 5,
+                    ratings: Array(targetOptions.length).fill(5)
+                });
+            }
 
             // Set normalized model variables properties back into centralized runtime local storage state boundaries
             state.title = parsedData.title || parsedData.project_title || "AI Matrix Session Strategy";

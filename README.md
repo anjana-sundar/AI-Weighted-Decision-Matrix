@@ -13,6 +13,7 @@ The **Weighted Decision Matrix** turns that choice into a transparent, adjustabl
 - Compare job offers by compensation, growth, flexibility, and commute.
 - Evaluate colleges or courses by cost, quality, location, and opportunity.
 - Weigh a move against the value of community, affordability, and career prospects.
+- Help product managers organize competing product priorities, compare trade-offs, and make sound decisions from a simple prompt.
 - Bring structure to any choice where several competing factors matter.
 
 ## How the matrix works
@@ -24,6 +25,10 @@ Weighted total for an option = sum(criterion weight × option score)
 ```
 
 The totals are normalized to a percentage of the highest possible score, making options easier to compare. A higher result indicates a closer fit with the weights and scores currently in the matrix—not a guaranteed “right” answer. The result is only as useful as its assumptions, so review and adjust the AI suggestions to reflect your own circumstances.
+
+## Useful for product decisions
+
+Product managers can use the matrix to turn a prompt about a roadmap, feature, customer segment, or launch plan into a practical starting point for prioritization. Compare initiatives against criteria such as customer impact, strategic fit, effort, risk, and time to value, then adjust the weights to reflect the team's goals. The result makes trade-offs visible and gives stakeholders a shared basis for discussion.
 
 ## Use it in three steps
 
