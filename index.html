@@ -135,7 +135,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .progress-ring-circle { transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .summary-container-grid { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(min(100%, 280px), 1fr); gap: 24px; overflow-x: auto; padding: 10px 6px 18px; scroll-snap-type: x proximity; scrollbar-color: #6B6B6B transparent; }
-        .summary-card { min-width: 0; scroll-snap-align: start; transform-origin: center; transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease; }
+        .summary-container-grid .summary-card { box-sizing: border-box; min-width: 0; border: 2px solid transparent; scroll-snap-align: start; transform-origin: center; transition: background-color .25s ease, box-shadow .25s ease, transform .25s ease; }
         .summary-card.is-top-ranked { border-color: #FFFFFF; }
         .summary-card:hover, .summary-card:focus-within { background-color: rgba(107, 107, 107, .24); transform: scale(1.025); z-index: 2; }
         .summary-card .rank-label { color: #B8B8B8 !important; opacity: 1; }
