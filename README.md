@@ -1,12 +1,14 @@
 # Weighted Decision Matrix
 
+AI-powered decision support tool that converts natural language decisions into structured weighted decision matrices using FastAPI and AI.
+
 ### A clearer way to make the choices that shape your life.
 
 Choosing a job, a college, a course, or a new place to live can mean weighing very different priorities. A traditional pros-and-cons list gives every point equal space, even when some things matter much more to you than others.
 
 The **Weighted Decision Matrix** turns that choice into a transparent, adjustable comparison. Describe your decision in everyday language and AI suggests options, evaluation criteria, priorities, and scores. You stay in control: change the assumptions, adjust the weights, and see how your priorities affect the result.
 
-> A structured decision-support technique used in fields such as engineering, economics, operations research, and strategic planning—made approachable for everyday decisions.
+> A structured decision-support technique used in fields such as engineering, economics, operations research, and strategic planning, made approachable for everyday decisions.
 
 ## When it can help
 
@@ -24,7 +26,7 @@ Each criterion receives an importance **weight** from 1 to 10. Each option recei
 Weighted total for an option = sum(criterion weight × option score)
 ```
 
-The totals are normalized to a percentage of the highest possible score, making options easier to compare. A higher result indicates a closer fit with the weights and scores currently in the matrix—not a guaranteed “right” answer. The result is only as useful as its assumptions, so review and adjust the AI suggestions to reflect your own circumstances.
+The totals are normalized to a percentage of the highest possible score, making options easier to compare. A higher result indicates a closer fit with the weights and scores currently in the matrix, not a guaranteed "right" answer. The result is only as useful as its assumptions, so review and adjust the AI suggestions to reflect your own circumstances.
 
 ## Useful for product decisions
 
@@ -42,10 +44,10 @@ Product managers can use the matrix to turn a prompt about a roadmap, feature, c
 | --- | --- |
 | Interface | HTML, JavaScript, Tailwind CSS |
 | API | Python, FastAPI |
-| AI generation | Cohere API |
+| AI generation | Cohere Chat API |
 | Hosting | Render |
 
-The Cohere API key belongs on the server, never in browser JavaScript or a public repository.
+The app currently uses the Cohere Chat API. Its API key belongs on the server, never in browser JavaScript or a public repository.
 
 ## Run locally
 
